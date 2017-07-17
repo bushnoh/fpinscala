@@ -111,5 +111,39 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def reverse2[A](l: List[A]): List[A] = foldLeft(l,List[A]())((r,l) => Cons(l,r))
 
-  def map[A, B](l: List[A])(f: A => B): List[B] = ???
+  def addOneToList(l: List[Int]): List[Int] = foldRight(l,Nil:List[Int])((h,t) => Cons(h+1,t))
+
+  def toString(l: List[Double]): List[String] = foldRight(l,Nil:List[String])((h,t) => Cons(h.toString,t))
+
+  def map[A, B](l: List[A])(f: A => B): List[B] = foldRight(l,Nil:List[B])((h,t) => Cons(f(h),t))
+
+  def filter[A](l: List[A])(f: A => Boolean): List[A] = foldRight(l,Nil:List[A])((h,t) => if (f(h)) Cons(h,t) else t)
+
+  def flatMap[A,B](as: List[A])(f: A => List[B]) : List[B] = reverse(foldLeft(as,Nil:List[B])((t,h) => foldRight(f(h),t)((h1,t1) => Cons(h1,t1))))
+
+  def filterViaFlatMap[A](l: List[A])(f: A => Boolean): List[A] = flatMap(l)( e => if (f(e)) Cons(e,Nil) else Nil)
+
+  def addLists(la: List[Int], lb: List[Int]): List[Int] = (la,lb) match {
+    case (Nil,_) => Nil
+    case (_,Nil) => Nil
+    case (Cons(ha,ta),Cons(hb,tb)) => Cons(ha+hb,addLists(ta,tb))
+  }
+
+  def zipWith[A,B,C](la: List[A],lb: List[B])(f: (A,B) => C): List[C] = (la,lb) match {
+    case (Nil,_) => Nil
+    case (_,Nil) => Nil
+    case (Cons(ha,ta),Cons(hb,tb)) => Cons(f(ha,hb),zipWith(ta,tb)(f))
+  }
+
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = (sup,sub) match {
+    case (_,Nil) => true
+    case (Nil,_) => false
+    case (Cons(hsup,tsup),Cons(hsub,tsub)) => {
+      if (hsup == hsub) {
+        if (hasSubsequence(tsup,tsub)) true
+        else hasSubsequence(tsup,sub)
+      }
+      else hasSubsequence(tsup,sub)
+    }
+  }
 }
