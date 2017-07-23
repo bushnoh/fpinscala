@@ -77,5 +77,5 @@ object Option {
     a.foldRight(nil)((a, z) => map2(f(a),z)(_::_))
   }
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = traverse(a)(v => v)
+  def sequence2[A](a: List[Option[A]]): Option[List[A]] = traverse(a)(v => v)
 }
